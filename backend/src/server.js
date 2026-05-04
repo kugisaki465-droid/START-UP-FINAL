@@ -1,6 +1,7 @@
 /**
  * SakaySmart Butuan — Express API Server
  * Serves both the REST API and the built React frontend from one process.
+ * Authentication required for all /api routes except /api/auth/*
  */
 
 require('dotenv').config();
@@ -14,6 +15,7 @@ const fs      = require('fs');
 const routeRoutes        = require('./routes/routeRoutes');
 const feedbackRoutes     = require('./routes/feedbackRoutes');
 const announcementRoutes = require('./routes/announcementRoutes');
+const { requireAuth }    = require('./middleware/auth');
 
 const app  = express();
 const PORT = process.env.PORT || 3001;
@@ -23,56 +25,47 @@ const FRONTEND_DIST = path.join(__dirname, '../../frontend/dist');
 const hasFrontend   = fs.existsSync(path.join(FRONTEND_DIST, 'index.html'));
 
 // ─── Security & Logging ───────────────────────────────────────────────────────
-app.use(helmet({
-  contentSecurityPolicy: false, // allow Leaflet CDN tiles
-}));
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
 app.use(express.json());
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
-// ─── Health check ─────────────────────────────────────────────────────────────
+// ─── Health check (public) ────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
   res.json({
     status:   'ok',
     service:  'SakaySmart Butuan API',
-    version:  '1.0.0',
+    version:  '2.0.0',
     frontend: hasFrontend ? 'served' : 'not built',
+    auth:     'JWT enabled',
   });
 });
 
-// ─── API Routes ───────────────────────────────────────────────────────────────
-app.use('/api', routeRoutes);
-app.use('/api', feedbackRoutes);
-app.use('/api', announcementRoutes);
+// ─── Auth Routes (public — no token needed) ───────────────────────────────────
+// Firebase handles auth client-side — no server auth routes needed
 
-// ─── Serve React frontend (production build) ──────────────────────────────────
+// ─── Protected API Routes (token required) ────────────────────────────────────
+app.use('/api', requireAuth, routeRoutes);
+app.use('/api', requireAuth, feedbackRoutes);
+app.use('/api', requireAuth, announcementRoutes);
+
+// ─── Serve React frontend ─────────────────────────────────────────────────────
 if (hasFrontend) {
-  // Serve static assets (JS, CSS, images)
   app.use(express.static(FRONTEND_DIST));
-
-  // SPA fallback — all non-API routes return index.html
   app.get('*', (req, res) => {
     res.sendFile(path.join(FRONTEND_DIST, 'index.html'));
   });
-
-  console.log(`\n✅ Frontend build found — will be served from http://localhost:${PORT}`);
 } else {
-  // No build yet — helpful 404 for browser
   app.get('/', (req, res) => {
     res.status(200).send(`
       <html><body style="font-family:sans-serif;padding:2rem">
-        <h2>🚌 SakaySmart Butuan API</h2>
-        <p>Backend is running. Frontend build not found.</p>
-        <p>Run <code>npm run build</code> inside the <code>frontend/</code> folder, then restart.</p>
-        <p><a href="/health">Health check</a> | <a href="/api/routes">Routes API</a></p>
+        <h2>🚌 SakaySmart Butuan API v2</h2>
+        <p>Backend running with JWT authentication.</p>
+        <p><a href="/health">Health</a> | POST /api/auth/signup | POST /api/auth/login</p>
       </body></html>
     `);
   });
-
-  // 404 for everything else
-  app.use((req, res) => {
-    res.status(404).json({ error: 'Endpoint not found' });
-  });
+  app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 }
 
 // ─── Global error handler ─────────────────────────────────────────────────────
@@ -84,11 +77,12 @@ app.use((err, req, res, next) => {
 // ─── Start ────────────────────────────────────────────────────────────────────
 if (require.main === module) {
   app.listen(PORT, () => {
-    console.log(`\n🚌 SakaySmart Butuan running on http://localhost:${PORT}`);
+    console.log(`\n🚌 SakaySmart Butuan v2 running on http://localhost:${PORT}`);
     console.log(`   Health : http://localhost:${PORT}/health`);
-    console.log(`   API    : http://localhost:${PORT}/api/routes`);
+    console.log(`   Auth   : POST http://localhost:${PORT}/api/auth/signup`);
+    console.log(`   Auth   : POST http://localhost:${PORT}/api/auth/login`);
     if (hasFrontend) {
-      console.log(`   App    : http://localhost:${PORT}  ← open this in your browser\n`);
+      console.log(`   App    : http://localhost:${PORT}  ← open in browser\n`);
     }
   });
 }

@@ -1,26 +1,28 @@
 import React, { useState } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import SignupPage from './pages/SignupPage.jsx';
 import Header from './components/Header.jsx';
-import OfflineBanner from './components/OfflineBanner.jsx';
 import RouteFinder from './components/RouteFinder.jsx';
 import RouteResults from './components/RouteResults.jsx';
 import RouteDirectory from './components/RouteDirectory.jsx';
 import AnnouncementBanner from './components/AnnouncementBanner.jsx';
 import FeedbackModal from './components/FeedbackModal.jsx';
+import OfflineBanner from './components/OfflineBanner.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 
 const TABS = [
   { id: 'finder',    label: '🔍 Find Route' },
   { id: 'directory', label: '🗺️ Routes' },
 ];
 
-export default function App() {
+// ─── Main App (shown after login) ─────────────────────────────────────────────
+function Dashboard() {
+  const { user, logout } = useAuth();
   const [activeTab, setActiveTab]       = useState('finder');
   const [routeResult, setRouteResult]   = useState(null);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [selectedRouteId, setSelectedRouteId] = useState(null);
-
-  function handleRouteFound(result) {
-    setRouteResult(result);
-  }
 
   function handleFeedback(routeId) {
     setSelectedRouteId(routeId);
@@ -29,7 +31,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header />
+      <Header user={user} onLogout={logout} />
       <OfflineBanner />
       <AnnouncementBanner />
 
@@ -42,7 +44,7 @@ export default function App() {
               onClick={() => { setActiveTab(tab.id); if (tab.id === 'finder') setRouteResult(null); }}
               className={`flex-1 py-3 text-sm font-semibold transition-colors
                 ${activeTab === tab.id
-                  ? 'text-brand-600 border-b-2 border-brand-500'
+                  ? 'text-orange-600 border-b-2 border-orange-500'
                   : 'text-gray-500 hover:text-gray-700'}`}
             >
               {tab.label}
@@ -51,11 +53,11 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Main content */}
+      {/* Content */}
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6 space-y-4">
         {activeTab === 'finder' && (
           <>
-            <RouteFinder onRouteFound={handleRouteFound} />
+            <RouteFinder onRouteFound={setRouteResult} />
             {routeResult && (
               <RouteResults result={routeResult} onFeedback={handleFeedback} />
             )}
@@ -65,7 +67,7 @@ export default function App() {
       </main>
 
       <footer className="text-center text-xs text-gray-400 py-4 border-t border-gray-100">
-        SakaySmart Butuan v1.0 · Helping commuters navigate Butuan City
+        SakaySmart Butuan v2.0 · Logged in as <strong>{user?.full_name}</strong>
       </footer>
 
       {feedbackOpen && (
@@ -75,5 +77,44 @@ export default function App() {
         />
       )}
     </div>
+  );
+}
+
+// ─── Auth Gate ─────────────────────────────────────────────────────────────────
+function AuthGate() {
+  const { user, loading } = useAuth();
+  const [showSignup, setShowSignup] = useState(false);
+
+  // Loading spinner while checking stored token
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+        <div className="text-center text-white">
+          <div className="text-5xl mb-4 animate-bounce">🚌</div>
+          <p className="text-lg font-semibold">Loading SakaySmart…</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Not logged in → show auth pages
+  if (!user) {
+    return showSignup
+      ? <SignupPage onSwitch={() => setShowSignup(false)} />
+      : <LoginPage  onSwitch={() => setShowSignup(true)} />;
+  }
+
+  // Logged in → show dashboard
+  return <Dashboard />;
+}
+
+// ─── Root ──────────────────────────────────────────────────────────────────────
+export default function App() {
+  return (
+    <ErrorBoundary>
+      <AuthProvider>
+        <AuthGate />
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }

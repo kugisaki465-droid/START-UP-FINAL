@@ -1,4 +1,6 @@
-# Render.com deployment configuration
+# Render.com deployment — SakaySmart Butuan
+# Single service: Express backend serves the built React frontend
+
 services:
   - type: web
     name: sakaysmart-butuan
@@ -15,3 +17,5 @@ services:
         value: ./data/sakaysmart.db
       - key: CORS_ORIGIN
         value: "*"
+      - key: FIREBASE_PROJECT_ID
+        value: start-up-fb533

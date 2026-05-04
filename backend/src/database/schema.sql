@@ -112,3 +112,20 @@ CREATE TABLE IF NOT EXISTS route_graph_edges (
 
 CREATE INDEX IF NOT EXISTS idx_edges_from ON route_graph_edges(from_landmark);
 CREATE INDEX IF NOT EXISTS idx_edges_to   ON route_graph_edges(to_landmark);
+
+-- ------------------------------------------------------------
+-- USERS
+-- Registered accounts with hashed passwords
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS users (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  full_name    TEXT    NOT NULL,
+  email        TEXT    NOT NULL UNIQUE COLLATE NOCASE,
+  password     TEXT    NOT NULL,           -- bcrypt hash
+  role         TEXT    DEFAULT 'user' CHECK(role IN ('user','admin')),
+  is_active    INTEGER DEFAULT 1,
+  created_at   TEXT    DEFAULT (datetime('now')),
+  last_login   TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);

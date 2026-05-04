@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { getAnnouncements } from '../api/client.js';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const TYPE_STYLES = {
   info:    'bg-blue-50 border-blue-200 text-blue-800',
   warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
   alert:   'bg-red-50 border-red-200 text-red-800',
 };
-
 const TYPE_ICONS = { info: 'ℹ️', warning: '⚠️', alert: '🚨' };
 
 export default function AnnouncementBanner() {
+  const { user } = useAuth();
   const [announcements, setAnnouncements] = useState([]);
-  const [dismissed, setDismissed] = useState(new Set());
+  const [dismissed, setDismissed]         = useState(new Set());
 
+  // Only fetch when user is logged in
   useEffect(() => {
+    if (!user) return;
     getAnnouncements()
       .then(setAnnouncements)
-      .catch(() => {}); // silent fail — offline mode
-  }, []);
+      .catch(() => {});
+  }, [user]);
 
   const visible = announcements.filter(a => !dismissed.has(a.id));
   if (visible.length === 0) return null;
@@ -38,9 +41,7 @@ export default function AnnouncementBanner() {
             onClick={() => setDismissed(prev => new Set([...prev, ann.id]))}
             className="shrink-0 opacity-60 hover:opacity-100 text-lg leading-none"
             aria-label="Dismiss"
-          >
-            ×
-          </button>
+          >×</button>
         </div>
       ))}
     </div>
