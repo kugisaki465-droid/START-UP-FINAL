@@ -1,0 +1,23 @@
+# Render.com deployment configuration
+# Deploy this as a Web Service pointing to the backend folder
+
+services:
+  - type: web
+    name: sakaysmart-butuan
+    runtime: node
+    rootDir: backend
+    buildCommand: "npm install && node src/database/seed.js"
+    startCommand: "node src/server.js"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: DB_PATH
+        value: ./data/sakaysmart.db
+      - key: CORS_ORIGIN
+        value: "*"
+    disk:
+      name: sakaysmart-data
+      mountPath: /opt/render/project/src/backend/data
+      sizeGB: 1
