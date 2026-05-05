@@ -18,4 +18,4 @@ services:
       - key: CORS_ORIGIN
         value: "*"
       - key: FIREBASE_PROJECT_ID
-        value: start-up-fb533
+        value: start-up-9fe39
