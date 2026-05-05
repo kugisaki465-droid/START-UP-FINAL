@@ -67,15 +67,14 @@ export default function LoginPage({ onSwitch }) {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="text-6xl mb-3">🚌</div>
-          <h1 className="text-3xl font-bold text-white">SakaySmart</h1>
-          <p className="text-orange-100 mt-1">Smart commuting for Butuan City</p>
+          <h1 className="text-3xl font-bold text-white">Transee</h1>
+          <p className="text-orange-100 mt-1">Find your multicab route in Butuan City</p>
         </div>
 
         {/* Card */}
         <div className="bg-white rounded-3xl shadow-2xl p-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-1">Welcome back!</h2>
           <p className="text-gray-500 text-sm mb-6">Sign in to your account</p>
-
           {/* Google Sign-In */}
           <button
             onClick={handleGoogle}
@@ -168,7 +167,7 @@ export default function LoginPage({ onSwitch }) {
         </div>
 
         <p className="text-center text-orange-100 text-xs mt-6">
-          SakaySmart Butuan · Powered by Firebase
+          Transee · Find your multicab route in Butuan City
         </p>
       </div>
     </div>

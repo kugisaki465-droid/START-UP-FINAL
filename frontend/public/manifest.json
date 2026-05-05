@@ -1,7 +1,7 @@
 {
-  "name": "SakaySmart Butuan",
-  "short_name": "SakaySmart",
-  "description": "Smart commuting guide for Butuan City",
+  "name": "Transee — Butuan City Multicab Routes",
+  "short_name": "Transee",
+  "description": "Find your multicab route in Butuan City",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f97316",

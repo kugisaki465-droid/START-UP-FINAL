@@ -67,7 +67,7 @@ function Dashboard() {
       </main>
 
       <footer className="text-center text-xs text-gray-400 py-4 border-t border-gray-100">
-        SakaySmart Butuan v2.0 · Logged in as <strong>{user?.full_name}</strong>
+        Transee v1.0 · Logged in as <strong>{user?.full_name}</strong>
       </footer>
 
       {feedbackOpen && (
@@ -91,7 +91,7 @@ function AuthGate() {
       <div className="min-h-screen bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
         <div className="text-center text-white">
           <div className="text-5xl mb-4 animate-bounce">🚌</div>
-          <p className="text-lg font-semibold">Loading SakaySmart…</p>
+          <p className="text-lg font-semibold">Loading Transee…</p>
         </div>
       </div>
     );

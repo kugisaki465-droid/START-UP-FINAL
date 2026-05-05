@@ -11,8 +11,8 @@ export default function Header({ user, onLogout }) {
         <div className="flex items-center gap-3">
           <span className="text-3xl" role="img" aria-label="bus">🚌</span>
           <div>
-            <h1 className="text-lg font-bold leading-tight">SakaySmart Butuan</h1>
-            <p className="text-orange-100 text-xs">Smart commuting guide</p>
+            <h1 className="text-lg font-bold leading-tight">Transee</h1>
+            <p className="text-orange-100 text-xs">Find your multicab route in Butuan City</p>
           </div>
         </div>
 

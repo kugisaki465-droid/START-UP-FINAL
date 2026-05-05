@@ -81,13 +81,13 @@ export default function SignupPage({ onSwitch }) {
 
         <div className="text-center mb-6">
           <div className="text-5xl mb-2">🚌</div>
-          <h1 className="text-3xl font-bold text-white">SakaySmart</h1>
-          <p className="text-orange-100 mt-1">Smart commuting for Butuan City</p>
+          <h1 className="text-3xl font-bold text-white">Transee</h1>
+          <p className="text-orange-100 mt-1">Find your multicab route in Butuan City</p>
         </div>
 
         <div className="bg-white rounded-3xl shadow-2xl p-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-1">Create account</h2>
-          <p className="text-gray-500 text-sm mb-6">Join Butuan commuters on SakaySmart</p>
+          <p className="text-gray-500 text-sm mb-6">Join Butuan commuters on Transee</p>
 
           {/* Google Sign-Up */}
           <button
