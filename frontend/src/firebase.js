@@ -1,5 +1,5 @@
 /**
- * Firebase Configuration — SakaySmart Butuan
+ * Firebase Configuration — Transee Butuan
  */
 import { initializeApp } from 'firebase/app';
 import { getAuth }       from 'firebase/auth';

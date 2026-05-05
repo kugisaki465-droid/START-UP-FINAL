@@ -41,7 +41,7 @@ export default function FeedbackModal({ routeId, onClose }) {
           <div className="text-center py-6 space-y-2">
             <div className="text-4xl">🙏</div>
             <p className="font-semibold text-gray-800">Thank you for your feedback!</p>
-            <p className="text-sm text-gray-500">Your input helps improve SakaySmart Butuan.</p>
+            <p className="text-sm text-gray-500">Your input helps improve Transee.</p>
             <button onClick={onClose} className="btn-primary mt-2">Close</button>
           </div>
         ) : (
